@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE YARD | G-Force Performance Analytics</title>
+    <meta name="description" content="See the shocking science, speed, and force behind world-class gymnastics performance.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f2cd00; /* Vivid Gold */
+            --azure: #00519d;   /* Strong Azure */
+            --black: #000000;   /* Pure Black for high contrast */
+            --red: #da0d20;     /* Brilliant Amaranth */
+            --grey: #d7d9d6;    /* Light Gray */
+            --font-main: 'Arimo', sans-serif;
+            --font-heading: 'Bricolage Grotesque', sans-serif;
+        }
+        body {
+            background-color: var(--black);
+            background-image: radial-gradient(rgba(0, 81, 157, 0.3) 0.5px, transparent 0.5px);
+            background-size: 40px 40px;
+            color: white;
+            font-family: var(--font-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        h1, h2, h3, h4, button {
+            font-family: var(--font-heading);
+        }
+        .glow-text {
+            text-shadow: 0 0 20px rgba(242, 205, 0, 0.6);
+        }
+        .gold-border {
+            border: 1px solid rgba(242, 205, 0, 0.5);
+        }
+        .red-gradient {
+            background: linear-gradient(135deg, #da0d20 0%, #a10a18 100%);
+        }
+        .glass-panel {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        /* Technical Card Reveal Animation */
+        @keyframes cardSlideIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .reveal-active {
+            animation: cardSlideIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        /* The Scan Line Effect */
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--azure), #fff, var(--azure), transparent);
+            box-shadow: 0 0 15px var(--azure);
+            opacity: 0;
+            z-index: 10;
+        }
+        .scanning .scan-line {
+            animation: scanMove 0.8s ease-in-out;
+        }
+        @keyframes scanMove {
+            0% { top: 0; opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        /* Analyzed State (The Color Reversal) */
+        .fact-card.analyzed {
+            border-color: var(--azure) !important;
+            background: rgba(0, 81, 157, 0.15);
+            box-shadow: 0 0 30px rgba(0, 81, 157, 0.2);
+        }
+        .fact-card.analyzed .icon-box {
+            background: rgba(242, 205, 0, 0.2) !important;
+            color: var(--azure) !important;
+        }
+        .fact-card.analyzed .analyzed-badge {
+            opacity: 1;
+        }
+
+        /* Question & Fact Transitions (Zero-Jump Grid) */
+        .discovery-grid {
+            display: grid;
+            grid-template-areas: "stack";
+            align-items: start;
+        }
+        .question-text, .fact-text {
+            grid-area: stack;
+            transition: all 0.5s ease-in-out;
+        }
+        .fact-card.analyzed .question-text {
+            opacity: 0;
+            transform: scale(0.98);
+            pointer-events: none;
+        }
+        .fact-card.analyzed .fact-text {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .fact-text {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #science-report {
+            display: none;
+        }
+        .animate-flicker {
+            animation: flicker 2s infinite;
+        }
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Animated Bokeh Background - HIGH CONTRAST */
+        .bokeh-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: #000;
+            pointer-events: none;
+        }
+
+        .bokeh-layer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 1px;
+            height: 1px;
+            color: transparent;
+            font-size: 80px;
+            mix-blend-mode: screen;
+            animation: move 45s infinite ease-in-out alternate;
+        }
+
+        .bokeh-layer::before {
+            content: '.';
+            position: absolute;
+            /* Official Yard Azure (#00519d) and Gold (#f2cd00) - VIVID NEON */
+            text-shadow: 
+                2vmax 3vmax 60px rgba(0, 81, 157, 1), 
+                -3vmax -2vmax 70px rgba(242, 205, 0, 0.9),
+                4vmax -4vmax 80px rgba(0, 81, 157, 0.9), 
+                -5vmax 5vmax 90px rgba(242, 205, 0, 0.8),
+                6vmax 1vmax 100px rgba(0, 81, 157, 0.8), 
+                -2vmax -6vmax 75px rgba(242, 205, 0, 0.9),
+                1vmax 7vmax 110px rgba(0, 81, 157, 0.7), 
+                -7vmax 0vmax 65px rgba(242, 205, 0, 0.8);
+            filter: blur(15px);
+        }
+
+        .bokeh-layer::after {
+            content: '.';
+            position: absolute;
+            font-size: 15px;
+            /* Vivid Star-Dust (Pure White & Gold) */
+            text-shadow: 
+                5vmax -2vmax 3px rgba(255, 255, 255, 1), 
+                -4vmax 6vmax 2px rgba(242, 205, 0, 0.9),
+                8vmax 8vmax 3px rgba(255, 255, 255, 0.9), 
+                -10vmax -5vmax 2px rgba(242, 205, 0, 0.8),
+                12vmax 2vmax 3px rgba(255, 255, 255, 0.9), 
+                -2vmax -12vmax 2px rgba(242, 205, 0, 0.9),
+                3vmax 15vmax 3px rgba(255, 255, 255, 0.8), 
+                -15vmax 0vmax 2px rgba(242, 205, 0, 0.9);
+            filter: none;
+        }
+
+        .layer-1 { animation-duration: 48s; animation-delay: -5s; }
+        .layer-2 { animation-duration: 52s; animation-delay: -15s; transform: translate(-50%, -50%) rotate(90deg); }
+        .layer-3 { animation-duration: 45s; animation-delay: -25s; transform: translate(-50%, -50%) rotate(180deg); }
+        .layer-4 { animation-duration: 55s; animation-delay: -35s; transform: translate(-50%, -50%) rotate(270deg); }
+
+        @keyframes move {
+            from { transform: translate(-50%, -50%) rotate(0deg) scale(10); }
+            to { transform: translate(-50%, -50%) rotate(360deg) scale(20); }
+        }
+    </style>
+    <!-- Google Analytics 4 (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XXXXXXXXXX');
+    </script>
+    <!-- Celebration Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body class="flex flex-col items-center">
+    <!-- Animated Bokeh Background -->
+    <div class="bokeh-container">
+        <div class="bokeh-layer layer-1"></div>
+        <div class="bokeh-layer layer-2"></div>
+        <div class="bokeh-layer layer-3"></div>
+        <div class="bokeh-layer layer-4"></div>
+    </div>
+
+    <!-- Assessment Welcome Bar -->
+    <div class="w-full bg-[#da0d20] text-white py-2 px-4 text-center text-[10px] md:text-xs font-black uppercase tracking-[0.2em]">
+        Thank you for attending Lion City Classic 2026! <a href="#science-report" class="underline ml-2 hover:opacity-70 transition-opacity italic">Your Performance Data is Ready</a>
+    </div>
+
+    <!-- Brand Logo Header -->
+    <nav class="w-full py-6 md:py-8 flex justify-center">
+        <svg class="h-24 md:h-28 w-auto" viewBox="0 0 216 78.45" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#f2cd00" d="M30.55 44.35 29.36 44.35 29.36 45.93 29.36 47.41 29.36 49.08 30.55 49.08 30.55 47.5 35.31 47.5 35.31 45.93 30.55 45.93 30.55 44.35ZM29.37 38.03 31.74 38.03 31.74 40.4 29.37 40.4 29.37 41.98 35.31 41.98 35.31 40.4 32.93 40.4 32.93 38.03 35.31 38.03 35.31 36.46 29.37 36.46 29.37 38.03ZM29.37 34.09 35.31 34.09 35.31 29.35 34.12 29.35 34.12 32.51 32.93 32.51 32.93 29.75 31.74 29.75 31.74 32.51 30.55 32.51 30.55 29.35 29.37 29.35 29.37 34.09Z"/>
+            <path fill="#00519d" d="M63.54 29.51c-.32.16-.57.44-.69.78l-2.98 8.55c-.11.27-.1.39-.4.39h-.79c-.3 0-.29-.12-.4-.39l-2.98-8.55c-.12-.34-.36-.62-.69-.78-.19-.1-.4-.14-.62-.14h-3.61l6.31 13.42h4.75l6.34-13.42h-3.64c-.21 0-.43.05-.62.14ZM130.62 45.01l2.54-1.44v5.52h-3.57v-2.31c0-.54.22-1.06.6-1.44.13-.13.27-.24.43-.33ZM57.61 45.54h2.93c.31 0 .6.18.72.47l1.38 3.08h-7.13l1.38-3.08c.13-.29.41-.47.72-.47ZM105.64 48.71c-.4-.27-.71-.65-.87-1.1l-5.22-14.12c-.04-.12-.11-.23-.21-.32-.16-.16-.39-.26-.62-.26h-.07c-.23 0-.46.09-.62.26-.09.09-.16.2-.21.32l-5.22 14.12c-.17.45-.47.84-.87 1.1-.37.25-.81.38-1.26.38h-2.88l8.72-19.74h4.75s8.71 19.74 8.71 19.74h-2.88c-.45 0-.89-.13-1.26-.38ZM147.02 42.78v6.31h-2.21c-.36 0-.7-.14-.96-.4-.25-.25-.4-.6-.4-.95v-4.57c0-1.58-.79-2.37-1.98-2.37h-6.34c-.75 0-1.26.16-1.98.39l-3.56 1.58v-7.1l3.56 1.58c.7.24 1.25.4 1.98.4h6.34c.49 0 .98-.2 1.36-.54.37-.34.63-.84.63-1.43v-.79c0-1.19-1.01-1.98-1.98-1.98h-8.32v1.99l-2.54-1.46c-.15-.09-.3-.2-.43-.33-.38-.38-.6-.9-.6-1.44v-2.29l11.88-.02c3.96 0 5.55 2.12 5.55 5.92 0 2.82-1.13 3.95-3.17 3.95 2.04 0 3.17 1.01 3.17 3.55ZM97.22 45.54h2.93c.31 0 .6.18.72.47l1.38 3.08h-7.13l1.38-3.08c.13-.29.41-.47.72-.47ZM172.77 37.76v2.92c0 .31-.18.6-.47.72l-3.1 1.37v-7.1l3.1 1.37c.29.13.47.41.47.72ZM186.63 39.22c0 5.36-1.53 9.73-6.87 9.86h-.26l-10.3-.02v-2.29c0-.54.22-1.06.6-1.44.13-.12.27-.24.43-.33l2.54-1.46v1.97h6.88s.02.01.02.01c3.08-.12,3.37-3.67,3.4-5.72,0-.22 0-.42 0-.59s0-.38,0-.59c-.03-2.05-.32-5.6-3.4-5.72h-6.9v1.98l-2.54-1.46c-.15-.09-.3-.2-.43-.33-.38-.38-.6-.9-.6-1.44v-2.29l10.3-.02h.26c5.34.14 6.87 4.5 6.87 9.87Z"/>
+        </svg>
+    </nav>
+    <!-- Hero Section -->
+    <header class="w-full max-w-4xl px-6 pt-12 pb-16 text-center">
+        <div class="inline-block px-4 py-1.5 mb-8 text-[10px] font-extrabold tracking-[0.2em] uppercase border-2 rounded-full border-[#f2cd00]/30 text-[#f2cd00] animate-pulse">
+            The Yard Performance Division
+        </div>
+        <h1 class="text-4xl md:text-7xl font-extrabold mb-8 leading-[1.1] tracking-tight">
+            Unlock Their<br>
+            <span class="text-[#f2cd00] glow-text">Inner Athlete.</span>
+        </h1>
+        <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-16 leading-relaxed font-medium">
+            Discover the secret science behind every flip, twist, and landing. Access the technical data that builds elite performance.
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+            <div class="glass-panel p-8 rounded-2xl gold-border text-center">
+                <div class="w-14 h-14 mx-auto mb-6 flex items-center justify-center rounded-xl bg-[#f2cd00]/10 text-[#f2cd00]">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <h3 class="text-3xl font-black mb-2 text-[#f2cd00]">10–17x Load</h3>
+                <p class="text-gray-300 text-sm leading-relaxed">
+                    Tumbling landings generate 10–17x body weight in vertical ground reaction force. For a 40kg athlete, this exceeds 600kg of instantaneous impact.
+                </p>
+            </div>
+            <div class="glass-panel p-8 rounded-2xl gold-border text-center">
+                <div class="w-14 h-14 mx-auto mb-6 flex items-center justify-center rounded-xl bg-[#f2cd00]/10 text-[#f2cd00]">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                </div>
+                <h3 class="text-3xl font-black mb-2 text-[#f2cd00]">2.3 G-Force</h3>
+                <p class="text-gray-300 text-sm leading-relaxed">
+                    Giant swings on the high bar expose athletes to 2.3 Gs of centripetal acceleration, demanding elite grip strength and core stabilization.
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- The Gate (Lead Capture Form) -->
+    <section id="lead-form-section" class="w-full max-w-xl px-6 pb-32">
+        <div class="glass-panel p-10 rounded-3xl border-2 border-[#f2cd00]/20 relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-4 opacity-10">
+                <svg class="w-24 h-24 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+            </div>
+            
+            <h2 class="text-3xl font-black mb-4 text-center leading-tight">
+                Full Performance Analysis: 10 Technical Insights
+            </h2>
+            <p class="text-gray-400 text-sm mb-10 text-center leading-relaxed">
+                Review the engineering data behind vault velocity, fiber activation, and proprioceptive precision.
+            </p>
+            
+            <form id="gforce-lead-form" class="space-y-6">
+                <div>
+                    <label for="parentName" class="block text-[10px] font-black uppercase tracking-widest text-[#f2cd00] mb-2 opacity-80">Parent/Guardian Name</label>
+                    <input type="text" id="parentName" name="parentName" required 
+                        class="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 focus:outline-none focus:border-[#f2cd00] transition-all text-white font-medium"
+                        placeholder="e.g. Sarah Jenkins">
+                </div>
+                <div>
+                    <label for="email" class="block text-[10px] font-black uppercase tracking-widest text-[#f2cd00] mb-2 opacity-80">Email Address</label>
+                    <input type="email" id="email" name="email" required 
+                        class="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 focus:outline-none focus:border-[#f2cd00] transition-all text-white font-medium"
+                        placeholder="sarah@example.com">
+                </div>
+                <div>
+                    <label for="childName" class="block text-[10px] font-black uppercase tracking-widest text-[#f2cd00] mb-2 opacity-80">Child's Name (Optional)</label>
+                    <input type="text" id="childName" name="childName" 
+                        class="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 focus:outline-none focus:border-[#f2cd00] transition-all text-white font-medium"
+                        placeholder="e.g. Leo">
+                </div>
+                <div>
+                    <label for="childAge" class="block text-[10px] font-black uppercase tracking-widest text-[#f2cd00] mb-2 opacity-80">Child's Age (Optional)</label>
+                    <input type="number" id="childAge" name="childAge" min="1" max="18"
+                        class="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 focus:outline-none focus:border-[#f2cd00] transition-all text-white font-medium"
+                        placeholder="e.g. 7">
+                </div>
+                <button type="submit" id="submit-btn" 
+                    class="w-full red-gradient text-white font-black py-5 rounded-xl mt-6 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_10px_30px_rgba(218,13,32,0.3)] uppercase tracking-wider text-sm">
+                    YES, SEND ME THE FULL FACTS & PROGRAM DETAILS!
+                </button>
+            </form>
+            <div id="loading-spinner" class="hidden mt-8 text-center">
+                <div class="inline-block animate-spin rounded-full h-10 w-10 border-t-4 border-b-4 border-[#f2cd00]"></div>
+                <p class="text-xs font-black text-[#f2cd00] mt-4 tracking-[0.2em] uppercase">Decrypting Performance Data...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Reward (Revealed Section) -->
+    <section id="science-report" class="w-full px-6 py-24 border-t border-white/5">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-20">
+                <span class="text-white font-black tracking-[0.3em] uppercase text-[10px] border border-[#00519d]/50 px-3 py-1 rounded bg-[#00519d]/40">Classification: Elite Competitive</span>
+                <h2 class="text-4xl md:text-6xl font-black mt-6 tracking-tight text-white">Technical G-Force Analysis</h2>
+                <p class="text-gray-400 mt-4 max-w-xl mx-auto">Scientific analysis of the force, speed, and precision required for gymnastics excellence.</p>
+            </div>
+
+            <div id="facts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Data-driven facts will be injected here -->
+            </div>
+
+            <div class="mt-24 glass-panel p-12 rounded-3xl text-center border-2 border-[#00519d]/40 shadow-[0_0_50px_rgba(0,81,157,0.1)]">
+                <h2 class="text-3xl md:text-5xl font-black mb-6 uppercase tracking-tighter italic">The Final Step</h2>
+                <p class="text-gray-400 mb-10 text-lg max-w-2xl mx-auto leading-relaxed">
+                    Scientific data is only half the picture. To truly unlock your child's peak power and neural efficiency, a live technical evaluation is required.
+                </p>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSfkpTp72hoSPIq3kH-0-DsRVfvIg9mrXrjHt6gzkrZZIlWVbg/viewform" target="_blank" 
+                    class="inline-block red-gradient text-white font-black py-6 px-12 rounded-2xl hover:scale-[1.05] transition-all shadow-[0_20px_50px_rgba(218,13,32,0.4)] uppercase tracking-widest text-lg">
+                    Book Technical Assessment
+                </a>
+                <p class="text-gray-500 text-xs mt-8 uppercase tracking-widest font-bold">Professional Evaluation • Data Analysis • Elite Pathway</p>
+            </div>
+        </div>
+      </section>
+
+    <!-- Footer -->
+    <footer class="w-full py-16 flex flex-col items-center gap-10 border-t border-white/5 bg-black/40">
+        <!-- Footer Logo -->
+        <a href="https://www.theyard.sg/" target="_blank" class="hover:opacity-80 transition-opacity">
+            <svg class="h-12 md:h-14 w-auto" viewBox="0 0 216 78.45" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#f2cd00" d="M30.55 44.35 29.36 44.35 29.36 45.93 29.36 47.41 29.36 49.08 30.55 49.08 30.55 47.5 35.31 47.5 35.31 45.93 30.55 45.93 30.55 44.35ZM29.37 38.03 31.74 38.03 31.74 40.4 29.37 40.4 29.37 41.98 35.31 41.98 35.31 40.4 32.93 40.4 32.93 38.03 35.31 38.03 35.31 36.46 29.37 36.46 29.37 38.03ZM29.37 34.09 35.31 34.09 35.31 29.35 34.12 29.35 34.12 32.51 32.93 32.51 32.93 29.75 31.74 29.75 31.74 32.51 30.55 32.51 30.55 29.35 29.37 29.35 29.37 34.09Z"/>
+                <path fill="#00519d" d="M63.54 29.51c-.32.16-.57.44-.69.78l-2.98 8.55c-.11.27-.1.39-.4.39h-.79c-.3 0-.29-.12-.4-.39l-2.98-8.55c-.12-.34-.36-.62-.69-.78-.19-.1-.4-.14-.62-.14h-3.61l6.31 13.42h4.75l6.34-13.42h-3.64c-.21 0-.43.05-.62.14ZM130.62 45.01l2.54-1.44v5.52h-3.57v-2.31c0-.54.22-1.06.6-1.44.13-.13.27-.24.43-.33ZM57.61 45.54h2.93c.31 0 .6.18.72.47l1.38 3.08h-7.13l1.38-3.08c.13-.29.41-.47.72-.47ZM105.64 48.71c-.4-.27-.71-.65-.87-1.1l-5.22-14.12c-.04-.12-.11-.23-.21-.32-.16-.16-.39-.26-.62-.26h-.07c-.23 0-.46.09-.62.26-.09.09-.16.2-.21.32l-5.22 14.12c-.17.45-.47.84-.87 1.1-.37.25-.81.38-1.26.38h-2.88l8.72-19.74h4.75s8.71 19.74 8.71 19.74h-2.88c-.45 0-.89-.13-1.26-.38ZM147.02 42.78v6.31h-2.21c-.36 0-.7-.14-.96-.4-.25-.25-.4-.6-.4-.95v-4.57c0-1.58-.79-2.37-1.98-2.37h-6.34c-.75 0-1.26.16-1.98.39l-3.56 1.58v-7.1l3.56 1.58c.7.24 1.25.4 1.98.4h6.34c.49 0 .98-.2 1.36-.54.37-.34.63-.84.63-1.43v-.79c0-1.19-1.01-1.98-1.98-1.98h-8.32v1.99l-2.54-1.46c-.15-.09-.3-.2-.43-.33-.38-.38-.6-.9-.6-1.44v-2.29l11.88-.02c3.96 0 5.55 2.12 5.55 5.92 0 2.82-1.13 3.95-3.17 3.95 2.04 0 3.17 1.01 3.17 3.55ZM97.22 45.54h2.93c.31 0 .6.18.72.47l1.38 3.08h-7.13l1.38-3.08c.13-.29.41-.47.72-.47ZM172.77 37.76v2.92c0 .31-.18.6-.47.72l-3.1 1.37v-7.1l3.1 1.37c.29.13.47.41.47.72ZM186.63 39.22c0 5.36-1.53 9.73-6.87 9.86h-.26l-10.3-.02v-2.29c0-.54.22-1.06.6-1.44.13-.12.27-.24.43-.33l2.54-1.46v1.97h6.88s.02.01.02.01c3.08-.12,3.37-3.67,3.4-5.72,0-.22 0-.42 0-.59s0-.38,0-.59c-.03-2.05-.32-5.6-3.4-5.72h-6.9v1.98l-2.54-1.46c-.15-.09-.3-.2-.43-.33-.38-.38-.6-.9-.6-1.44v-2.29l10.3-.02h.26c5.34.14 6.87 4.5 6.87 9.87Z"/>
+            </svg>
+        </a>
+
+        <div class="flex gap-8">
+            <a href="https://www.instagram.com/theyardgymnastics/" target="_blank" class="text-gray-400 hover:text-[#00519d] transition-colors">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"></path></svg>
+            </a>
+            <a href="http://www.facebook.com/theyardgymnastics" target="_blank" class="text-gray-400 hover:text-[#00519d] transition-colors">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"></path></svg>
+            </a>
+            <a href="https://www.theyard.sg/#" target="_blank" class="text-gray-400 hover:text-[#00519d] transition-colors flex items-center gap-2">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"></path></svg>
+                <span class="text-xs font-bold uppercase tracking-widest">Contact Us</span>
+            </a>
+        </div>
+        <p class="text-gray-500 text-[10px] md:text-xs font-medium uppercase tracking-[0.2em] text-center px-6">
+            Copyright &copy; 2025 THE YARD - People In Motion Pte. Ltd.
+        </p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
